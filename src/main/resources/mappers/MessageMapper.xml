@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.taoguba.taoguba.mapper.MessageMapper">
+    <insert id="insertMessage">
+        INSERT INTO stock_data.tgb_message
+        (seq_num, author_name, author_id, subject, sub_info, body_text, create_time, send)
+        VALUES(#{seq_num}, #{author_name}, #{author_id}, #{subject}, #{sub_info}, #{body_text}, #{create_time}, 0);
+    </insert>
+    <update id="setMainBody">
+        update stock_data.tgb_message
+        set body_text = #{text} , send = 1
+        where seq_num = #{seqNum}
+    </update>
+    <update id="updateCommentTotalNum">
+        update stock_data.tgb_message
+        set totalNum = #{total} ,comment_times = comment_times+1
+        where seq_num = #{seqNum}
+    </update>
+    <update id="updateAccountTotalNum">
+        update stock_data.tgb_account
+        set totalNum = #{totalItemNum}
+        where account_name = #{account_name}
+    </update>
+    <update id="updateMessageSendFlag">
+        update stock_data.tgb_message
+        set send = 2
+        where seq_num = #{seqNum}
+    </update>
+    <update id="updateCommentSendFlag">
+        update stock_data.tgb_comment
+        set send = 1
+        where seq = #{seq}
+    </update>
+    <update id="updateCMTotalNum">
+        update stock_data.tgb_message
+        set totalCMNum = #{total} ,cMNumRefreshTimes = cMNumRefreshTimes+1
+        where seq_num = #{seqNum}
+    </update>
+    <update id="updateClassicMessageSendFlag">
+        update stock_data.tgb_classicmessage
+        set send = 1
+        where seq = #{seq}
+    </update>
+
+    <select id="existMessage" resultType="java.lang.Integer">
+        select count(1)
+        from  stock_data.tgb_message
+        where seq_num = #{seq_num}
+    </select>
+    <select id="getOneSeqNum" resultType="java.lang.String">
+        select seq_num from stock_data.tgb_message
+        where send = '0'
+        order by create_time
+        LIMIT 1
+    </select>
+    <select id="getOneSeqNumOfComment" resultType="java.lang.String">
+        select seq_num from stock_data.tgb_message
+        where send = '2'
+        order by comment_times,create_time
+        LIMIT 1
+    </select>
+    <select id="getTotalNum" resultType="java.lang.Integer">
+        select totalNum
+        from  stock_data.tgb_message
+        where seq_num = #{seqNum}
+    </select>
+    <select id="existComment" resultType="java.lang.Integer">
+        select count(1) from stock_data.tgb_comment
+        where seq = #{seq}
+    </select>
+    <select id="getAccountTotal" resultType="java.lang.Integer">
+        select totalNum from stock_data.tgb_account
+        where account_name = #{account_name}
+    </select>
+    <select id="getMessage" resultType="com.lhy.taoguba.taoguba.domain.MainBody">
+        SELECT id, seq_num, author_name, author_id, subject, sub_info, body_text, create_time, send, comment_times, totalNum
+        FROM stock_data.tgb_message
+        where send = 1
+        order by create_time
+        limit 1
+    </select>
+    <select id="getComment" resultType="com.lhy.taoguba.taoguba.domain.Comment">
+        SELECT id, seq, viewPointSeq, content, bestFlag, checkFlag, userID, userName, usefulNum, deleteFlag, replyFlag, creator, createdt, modifier, modifydt, userIP, portrait, replyContent, replyUserID, replyPortrait, replyTime, subject, stickFlag, replyseq, messageNum, messageImages, replyImages, auth, davFlag, cert, dvUserID, isNewReply, pccount, totalReplyNum, bytes, money, dav, replyuserName, send
+        FROM stock_data.tgb_comment
+        where send = 0
+        order by createdt
+        limit 1
+    </select>
+    <select id="existAccount" resultType="java.lang.Integer">
+        select count(1) from tgb_account
+        where account_name = #{account_name}
+    </select>
+    <select id="existClassicMessage" resultType="java.lang.Integer">
+        select count(1) from tgb_classicmessage
+        where seq = #{seq}
+    </select>
+    <select id="getTotalCMNum" resultType="java.lang.Integer">
+        select totalCMNum
+        from  stock_data.tgb_message
+        where seq_num = #{seqNum}
+    </select>
+    <select id="getOneSeqNumOfClassicMessage" resultType="java.lang.String">
+        select seq_num from stock_data.tgb_message
+        where send = '2'
+        order by cMNumRefreshTimes,create_time
+            LIMIT 1
+    </select>
+    <select id="getClassicMessage" resultType="com.lhy.taoguba.taoguba.domain.ClassicMessage">
+        SELECT id, seq, viewPointSeq, content, bestFlag, checkFlag, userID, userName, usefulNum, deleteFlag, replyFlag, creator, createdt, modifier, modifydt, userIP, portrait, replyContent, replyUserID, replyPortrait, replyTime, subject, stickFlag, replyseq, messageNum, messageImages, replyImages, auth, davFlag, cert, dvUserID, isNewReply, pccount, totalReplyNum, bytes, money, dav, replyuserName, send
+        FROM stock_data.tgb_classicmessage
+        where send = 0
+        order by createdt
+        limit 1
+    </select>
+
+    <insert id="insertComment">
+        INSERT INTO stock_data.tgb_comment
+        (seq, viewPointSeq, content, bestFlag, checkFlag, userID,
+         userName, usefulNum, deleteFlag, replyFlag, creator,
+         createdt, modifier, modifydt, userIP, portrait, replyContent,
+         replyUserID, replyPortrait, replyTime, subject, stickFlag,
+         replyseq, messageNum, messageImages, replyImages, auth, davFlag,
+         cert, dvUserID, isNewReply, pccount, totalReplyNum, bytes, money,
+         dav, replyuserName, send)
+        VALUES( #{seq}, #{viewPointSeq}, #{content}, #{bestFlag},
+               #{checkFlag}, #{userID}, #{userName}, #{usefulNum},
+               #{deleteFlag}, #{replyFlag}, #{creator}, #{createdt},
+               #{modifier}, #{modifydt}, #{userIP}, #{portrait},
+               #{replyContent}, #{replyUserID}, #{replyPortrait},
+               #{replyTime}, #{subject}, #{stickFlag}, #{replyseq},
+               #{messageNum}, #{messageImages}, #{replyImages}, #{auth},
+               #{davFlag}, #{cert}, #{dvUserID}, #{isNewReply}, #{pccount},
+               #{totalReplyNum}, #{bytes}, #{money}, #{dav}, #{replyuserName}, 0);
+
+    </insert>
+    <insert id="insertAccount">
+        INSERT INTO stock_data.tgb_account
+            (account_no, account_name, create_time, totalNum)
+        VALUES(#{account_no}, #{account_name}, #{create_time}, #{totalNum});
+    </insert>
+    <insert id="insertClassicMessage">
+        INSERT INTO stock_data.tgb_classicmessage
+        (seq, viewPointSeq, content, bestFlag, checkFlag, userID, userName, usefulNum,
+         deleteFlag, replyFlag, creator, createdt, modifier, modifydt, userIP, portrait,
+         replyContent, replyUserID, replyPortrait, replyTime, subject, stickFlag, replyseq,
+         messageNum, messageImages, replyImages, auth, davFlag, cert, dvUserID, isNewReply,
+         pccount, totalReplyNum, bytes, money, dav, replyuserName)
+        VALUES(#{seq}, #{viewPointSeq}, #{content}, #{bestFlag}, #{checkFlag}, #{userID},
+               #{userName}, #{usefulNum}, #{deleteFlag}, #{replyFlag}, #{creator}, #{createdt},
+               #{modifier}, #{modifydt}, #{userIP}, #{portrait}, #{replyContent}, #{replyUserID},
+               #{replyPortrait}, #{replyTime}, #{subject}, #{stickFlag}, #{replyseq}, #{messageNum},
+               #{messageImages}, #{replyImages}, #{auth}, #{davFlag}, #{cert}, #{dvUserID},
+               #{isNewReply}, #{pccount}, #{totalReplyNum}, #{bytes}, #{money}, #{dav}, #{replyuserName})
+    </insert>
+
+</mapper>

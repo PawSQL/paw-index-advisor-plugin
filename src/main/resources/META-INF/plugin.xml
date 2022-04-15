@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>org.example.demo3</id>
+    <name>ame here</name>
+    <vendor email="" url=""></vendor>
+
+    <description><![CDATA[
+        Index Advisor is a tool for index recommendation for MySQL and PostgreSQL databases, given a single or a set of DML statements as input.
+    ]]></description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable parentId="tools" instance="org.intellij.sdk.settings.AppSettingsConfigurable"
+                                 id="org.intellij.sdk.settings.AppSettingsConfigurable"
+                                 displayName="Index Advisor Config"/>
+        <applicationService serviceImplementation="org.intellij.sdk.settings.AppSettingsState"/>
+    </extensions>
+
+    <actions>
+        <action id="org.intellij.sdk.settings.IAAction.id" class="org.intellij.sdk.settings.IAAction" text="Advise Index"
+                description="index advisor">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+
+</idea-plugin>
